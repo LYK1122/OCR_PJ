@@ -13,12 +13,20 @@
         v-for="inv in inventories"
         :key="inv.inventory_id"
         class="inventory-card-box"
-        @click="goToInventory(inv.inventory_id)"
       >
-        <h2 class="inventory-card-title">
-          {{ inv.inventory_name || '(No Name)' }}
-        </h2>
-        <p class="inventory-count">{{ inv.itemCount }} items</p>
+        <div v-if="editMode === inv.inventory_id">
+          <input v-model="editName" class="inventory-input" />
+          <button @click.stop="saveInventoryName(inv.inventory_id)" class="action-btn">Save</button>
+          <button @click.stop="cancelEdit" class="action-btn">Cancel</button>
+        </div>
+        <div v-else @click="goToInventory(inv.inventory_id)">
+          <h2 class="inventory-card-title">
+            {{ inv.inventory_name || '(No Name)' }}
+          </h2>
+          <p class="inventory-count">{{ inv.itemCount }} items</p>
+          <button @click.stop="startEdit(inv)" class="action-btn">Edit</button>
+          <button @click.stop="deleteInventoryById(inv.inventory_id)" class="action-btn delete">Delete</button>
+        </div>
       </div>
     </div>
     <p v-else class="no-inventories">아직 생성된 인벤토리가 없습니다.</p>
@@ -26,7 +34,13 @@
 </template>
 
 <script>
-import { getInventoryList, getInventoryItems, postInventory } from '@/api/inventory'
+import {
+  getInventoryList,
+  getInventoryItems,
+  postInventory,
+  updateInventory,
+  deleteInventory
+} from '@/api/inventory'
 
 export default {
   name: 'InventoryPage',
@@ -34,21 +48,19 @@ export default {
     return {
       inventories: [],
       newInventoryName: '',
+      editMode: null,
+      editName: ''
     }
   },
   methods: {
     async fetchInventories() {
       try {
         const { data: list } = await getInventoryList()
-        console.log('Raw inventories:', list)
-
         this.inventories = await Promise.all(
           list.map(async (inv) => {
-            // fallback for id / name keys
             const id = inv.inventory_id ?? inv.inventoryId ?? inv.id
             const inventoryName = inv.inventory_name ?? inv.inventoryName ?? inv.name
 
-            // fetch items using correct id
             let itemCount = 0
             try {
               const { data: items } = await getInventoryItems(id)
@@ -57,12 +69,8 @@ export default {
               console.error(`Items fetch failed for ${id}:`, e)
             }
 
-            return {
-              inventory_id: id,
-              inventory_name: inventoryName,
-              itemCount,
-            }
-          }),
+            return { inventory_id: id, inventory_name: inventoryName, itemCount }
+          })
         )
       } catch (err) {
         console.error('Fetch inventories failed:', err)
@@ -74,12 +82,7 @@ export default {
       if (!name) return
       try {
         const { data } = await postInventory({ inventory_name: name })
-        // 응답에 name이 포함되지 않으므로, 수동으로 입력한 이름 사용
-        this.inventories.push({
-          inventory_id: data.inventory_id,
-          inventory_name: name,
-          itemCount: 0,
-        })
+        this.inventories.push({ inventory_id: data.inventory_id, inventory_name: name, itemCount: 0 })
         this.newInventoryName = ''
       } catch (err) {
         console.error('Create inventory failed:', err)
@@ -87,13 +90,44 @@ export default {
       }
     },
 
+    startEdit(inv) {
+      this.editMode = inv.inventory_id
+      this.editName = inv.inventory_name
+    },
+
+    cancelEdit() {
+      this.editMode = null
+      this.editName = ''
+    },
+
+    async saveInventoryName(inventoryId) {
+      try {
+        await updateInventory(inventoryId, { inventory_name: this.editName })
+        const inv = this.inventories.find(i => i.inventory_id === inventoryId)
+        if (inv) inv.inventory_name = this.editName
+        this.cancelEdit()
+      } catch (e) {
+        console.error('Update inventory failed:', e)
+      }
+    },
+
+    async deleteInventoryById(inventoryId) {
+      if (!confirm('정말 삭제하시겠습니까?')) return
+      try {
+        await deleteInventory(inventoryId)
+        this.inventories = this.inventories.filter(i => i.inventory_id !== inventoryId)
+      } catch (e) {
+        console.error('Delete inventory failed:', e)
+      }
+    },
+
     goToInventory(id) {
       this.$router.push({ path: '/home', query: { id } })
-    },
+    }
   },
   mounted() {
     this.fetchInventories()
-  },
+  }
 }
 </script>
 
@@ -156,5 +190,19 @@ export default {
   text-align: center;
   color: #999;
   margin-top: 2rem;
+}
+.action-btn {
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+.action-btn.delete {
+  background: #fdd;
+  border-color: #f88;
+  color: #800;
 }
 </style>
