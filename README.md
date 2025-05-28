@@ -29,7 +29,11 @@
 - **🍽 레시피 추천**
   - 현재 재고 기반으로 GPT가 생성 가능한 레시피 추천
   
+
+
 ---
+
+
 
 ## 💻 설치 및 실행 (Local Window 기준)
 
@@ -39,14 +43,17 @@
 ## 1. 프로젝트를 저장시킬 폴더 만들고 폴더로 이동 (windows git bash 환경 기준)
 cd c:/프로젝트 폴더
 
+
 ## 2. 프로젝트 clone(다운 받기)
 git clone 경진님 깃헙 주소
+
 
 ## 3. 프로젝트 환경 설치
 - Node.js 18 이상 (프론트엔드 실행용)
 - Java 17 이상 (Spring Boot 백엔드)
 - MySQL 8.0 이상
 - Git
+
 
 ## 🧩 프론트엔드 실행
 cd 프론트 폴더
@@ -56,14 +63,22 @@ npm run dev
 // 백엔드는 잘 모르겠어요..ㅜㅜ
 
 
+## ERD
+
+![](./images/ERD.png)
+
+
+---
+
+
 ## ✨ 기능 동작 예시
 
 ### 로그인 / 회원가입
 
 <table>
   <tr>
-    <td><img src="./images/login.png" width="300"/></td>
-    <td><img src="./images/signup.png" width="300"/></td>
+    <td><img src="./images/login.png" width="400"/></td>
+    <td><img src="./images/signup.png" width="400"/></td>
   </tr>
   <tr>
     <td align="center">1. 로그인 페이지</td>
@@ -71,14 +86,16 @@ npm run dev
   </tr>
 </table>
 
+
 ---
+
 
 ### 인벤토리 관리
 
 <table>
   <tr>
-    <td><img src="./images/inv1.png" width="300"/></td>
-    <td><img src="./images/inv2.png" width="300"/></td>
+    <td><img src="./images/inv1.png" width="400"/></td>
+    <td><img src="./images/inv2.png" width="400"/></td>
   </tr>
   <tr>
     <td align="center">3. 인벤토리 초기화면</td>
@@ -86,15 +103,58 @@ npm run dev
   </tr>
 </table>
 
+
 ---
+
 
 ### 영수증 입력
 
 <table>
   <tr>
-    <td><img src="./images/receipt.gif" width="300"/></td>
+    <td><img src="./images/receipt.gif" width="450"/></td>
+    <td><img src="./images/receipt1.gif" width="450"/></td>
+  </tr>
+   <tr>
+    <td align="center">5. 영수증 등록</td>
+    <td align="center">6. 상세정보 입력</td>
   </tr>
   </table>
 
+
 ---
+
+
+### 대시보드
+
+<table>
+  <tr>
+    <td><img src="./images/dash.png" width="400"/></td>
+    <td><img src="./images/dash1.gif" width="450"/></td>   
+  </tr>
+   <tr>
+    <td align="center">7. 대시보드에서 한 눈에 확인</td>
+    <td align="center">8. 아이템 추가</td>
+  </tr>
+  <tr>
+    <td><img src="./images/dash2.gif" width="450"/>
+  </td>
+  <tr>
+    <td align="center">9. 아이템 편집</td>
+  </tr>
+  </table>
+
+
+  ---
+
+
+### 레시피 추천
+
+<table>
+  <tr>
+    <td><img src="./images/recipe.gif" width="450"/></td>
+  </tr>
+   <tr>
+    <td align="center">10. 레시피 추천 받기</td>
+  </tr>
+  </table>
 
